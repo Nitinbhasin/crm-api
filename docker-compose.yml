@@ -3,7 +3,7 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
-    image: 'docker-phil-sahi-local.pruregistry.intranet.asia:8443/crm-api'
+    image: 'crm-api'
     container_name: crm-api
     ports:
       - "8080:8080"
