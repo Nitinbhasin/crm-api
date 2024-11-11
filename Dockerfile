@@ -1,4 +1,4 @@
-FROM docker-phil-sahi.pruregistry.intranet.asia:8443/maven:3.9.6-eclipse-temurin-17 as build
+FROM maven:3.9.6-eclipse-temurin-17 as build
 
 WORKDIR /app
 COPY pom.xml .
@@ -13,7 +13,7 @@ RUN mvn install -s settings.xml
 
 
 
-FROM docker-phil-sahi.pruregistry.intranet.asia:8443/maven:3.9.6-eclipse-temurin-17
+FROM maven:3.9.6-eclipse-temurin-17
 
 RUN apt-get update && apt-get install -y curl openssl
 RUN apt-get update && apt-get install -y openssl
