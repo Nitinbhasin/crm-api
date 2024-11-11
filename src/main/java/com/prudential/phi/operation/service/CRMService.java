@@ -331,7 +331,7 @@ public class CRMService {
 	public String fetchCaseDocContentById(String docId) throws Exception {
 		String access_token = doLogin();
 		String body = restUtil.getOctetStream(
-				instanceUrl + "services/data/v62.0/sobjects/ContentVersion/" + docId + "/VersionData", access_token);
+				instanceUrl + "/services/data/v62.0/sobjects/ContentVersion/" + docId + "/VersionData", access_token);
 		JSONObject obj = new JSONObject();
 		obj.put("content", body);
 		return obj.toString();
