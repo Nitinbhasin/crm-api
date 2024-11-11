@@ -1,0 +1,42 @@
+name: deploy-crm pipeline
+run-name: ${{ github.actor }} triggered crm-api deployment
+
+on:
+  push:
+    branches:
+      - main
+      - feature/local
+
+jobs:
+  build:
+    runs-on: pru-phi-all-nprd-linux-runner-01
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Artifactory registry login
+        uses: ./.github/registry-login
+        with:
+          artifactory_username: ${{ secrets.ARTIFACTORY_USER }}
+          artifactory_password: ${{ secrets.ARTIFACTORY_TOKEN }}
+
+      - name: docker compose up
+        run: docker compose -f docker-compose.yml build crm-api
+
+      - name: Docker push
+        run: docker push docker-phil-sahi-local.pruregistry.intranet.asia:8443/crm-api:latest
+  deploy:
+    needs: build
+    runs-on: pru-phi-all-nprd-linux-runner-01
+    container:
+      image: docker-phil-sahi.pruregistry.intranet.asia:8443/lachlanevenson/k8s-kubectl:latest
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_USER }}
+        password: ${{ secrets.ARTIFACTORY_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: SET KUBECONFIG
+        run: echo ${{ secrets.KUBECONFIG_FILE }} | base64 -d > ./config
+      - name: Deploy application
+        run: kubectl apply -f ./deployments/crm-api.yml --kubeconfig=config

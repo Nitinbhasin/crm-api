@@ -1,0 +1,17 @@
+server:
+  max-http-request-header-size: 20MB
+
+crm:
+  loginUrl: https://login.salesforce.com
+  disableSSLCertificateValidation: true
+  username: nitin.bhasin@personal.sandbox
+  password: Om10$airamcTZExyKEzQEofYrLDb1ejeAs
+  clientId: 3MVG9VMBZCsTL9hkd8jXNJB0zc8XCU4ThUl6LgSPC25d9uKFmM4OgvSQzsH2EA32Ksng5wqxlhLiQ9I3rUyBF
+  clientSecret: 6592A6259BF3FF2DF0AA5BA4E39BE024C2EB2C92236804CB55B3C5542F63786E
+
+  
+logging:
+  pattern:
+    console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%t] %-5level trace_id=%mdc{trace_id} %logger{36}:%L - %msg%n"
+  level:
+    com.prudential.phi.operation: ${LOG_LEVEL:INFO}

@@ -1,0 +1,25 @@
+name: Artifactory registry login
+description: Authenticate artifactry registry
+inputs:
+  artifactory_username:
+    description: Artifactory service account
+    required: true
+  artifactory_password:
+    description: Artifactory token
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Docker login
+      uses: docker/login-action@v3
+      with:
+        registry: docker-phil-sahi.pruregistry.intranet.asia:8443
+        username: ${{ inputs.artifactory_username }}
+        password: ${{ inputs.artifactory_password }}
+
+    - name: Docker login local
+      uses: docker/login-action@v3
+      with:
+        registry: docker-phil-sahi-local.pruregistry.intranet.asia:8443
+        username: ${{ inputs.artifactory_username }}
+        password: ${{ inputs.artifactory_password }} 

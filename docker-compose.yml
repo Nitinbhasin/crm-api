@@ -1,0 +1,24 @@
+services:
+  crm-api:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: 'docker-phil-sahi-local.pruregistry.intranet.asia:8443/crm-api'
+    container_name: crm-api
+    ports:
+      - "8080:8080"
+
+  crm-api-local:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: 'phi/crm-api-local'
+    container_name: crm-api-local
+    ports:
+      - "8080:8080"
+    networks:
+      - shared-network
+
+networks:
+  shared-network:
+    external: true
