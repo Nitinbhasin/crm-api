@@ -170,7 +170,7 @@ public class RestUtil {
 	@SuppressWarnings("deprecation")
 	public String sendPost(String baseURL, List<NameValuePair> parametersBody, String relativePath,
 			MediaType contentType) throws Exception {
-		performCurlCommand1();
+		//performCurlCommand1();
 		if (CRM_DISABLE_SSL_VALIDATION) {
 			disableSSLCertificateValidation();
 		}
