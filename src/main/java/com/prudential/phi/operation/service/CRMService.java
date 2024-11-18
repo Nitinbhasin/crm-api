@@ -96,10 +96,15 @@ public class CRMService {
 
 	public String addCommentToCase(CreateCommentRequest createCommentRequest) throws Exception {
 		String access_token = doLogin();
+		if(IsClosedCase(createCommentRequest.getCaseId(), access_token))
+		{
+			throw new InternalError("Case is Already Closed");
+		}
 		JSONObject jsonObject = new JSONObject();
 		String commentId = addComment(access_token, createCommentRequest.getBody(), createCommentRequest.getCaseId(),
 				createCommentRequest.getIsPublic());
 		if (!StringUtils.isEmpty(commentId)) {
+			log.info("Comment is added to case with comment id: "+ commentId);
 			jsonObject.put("success", true);
 			jsonObject.put("message", "Added Successfully");
 		} else {
@@ -185,7 +190,9 @@ public class CRMService {
 		String body = restUtil.sendPost(instanceUrl, accessToken, jsonObject.toString(),
 				"services/data/v62.0/sobjects/Case", MediaType.APPLICATION_JSON);
 		JSONObject responseObject = new JSONObject(body);
-		return responseObject.getString("id");
+		String caseId= responseObject.getString("id");
+		log.info("A new case is registered with case Id: "+ caseId);
+		return caseId;
 	}
 
 	public String fetchCaseNumber(String accessToken, String caseId) throws Exception {
@@ -196,6 +203,15 @@ public class CRMService {
 		return responseObject.getString("CaseNumber");
 	}
 
+	public Boolean IsClosedCase(String caseId, String accessToken) throws Exception {
+
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+		String body = restUtil.sendGET(instanceUrl, "services/data/v62.0/sobjects/Case/" + caseId, accessToken,
+				queryParams);
+		JSONObject obj = new JSONObject(body);
+		return obj.optBoolean("IsClosed");
+	}
+	
 	public SearchCasesResponse fetchCaseByID(String caseId) throws Exception {
 		String access_token = doLogin();
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
@@ -253,6 +269,10 @@ public class CRMService {
 
 	public String updateCase(String caseId, UpdateCaseRequest updateCaseRequest) throws Exception {
 		String access_token = doLogin();
+		if(IsClosedCase(caseId, access_token))
+		{
+			throw new InternalError("Case is Already Closed");
+		}
 		JSONObject jsonObject = new JSONObject();
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -268,10 +288,47 @@ public class CRMService {
 
 		return jsonObject.toString();
 	}
+	
+	public String deleteCase(String caseId) throws Exception {
+		String access_token = doLogin();
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+
+		Integer statusCode = restUtil.sendDELETE(instanceUrl, "services/data/v62.0/sobjects/Case/" + caseId,
+				access_token, queryParams);
+		JSONObject jsonObject = new JSONObject();
+		if (statusCode == 204) {
+			log.info("Case is deleted with caseID: "+caseId);
+			jsonObject.put("isDeleted", true);
+			jsonObject.put("message", "Deleted Successfully");
+		} else
+			throw new InternalError("Failed To Delete");
+
+		return jsonObject.toString();
+	}
+	
+	public String deleteComment(String commentId) throws Exception {
+		String access_token = doLogin();		
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+
+		Integer statusCode = restUtil.sendDELETE(instanceUrl, "services/data/v62.0/sobjects/CaseComment/" + commentId,
+				access_token, queryParams);
+		JSONObject jsonObject = new JSONObject();
+		if (statusCode == 204) {
+			log.info("Comment is deleted with caseID: "+commentId);
+			jsonObject.put("isDeleted", true);
+			jsonObject.put("message", "Deleted Successfully");
+		} else
+			throw new InternalError("Failed To Delete");
+
+		return jsonObject.toString();
+	}
 
 	public String addDocToCase(String caseId, Document document) throws Exception {
 		String access_token = doLogin();
-
+		if(IsClosedCase(caseId, access_token))
+		{
+			throw new InternalError("Case is Already Closed");
+		}
 		String docId = uploadContent(access_token, document, caseId);
 		log.info("Doc Created With Id: {}", docId);
 		String contentDocId = fetchContentDocumentId(access_token, docId);

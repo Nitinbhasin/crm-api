@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import com.prudential.phi.operation.util.RestUtil;
 
 import io.swagger.annotations.ApiOperation;
 
+@Validated
 @RestController
 @RequestMapping("/crm")
 public class CRMApiController {
@@ -95,5 +97,16 @@ public class CRMApiController {
 	public ResponseEntity<Object> addDocToCase(@Valid @RequestBody Document docRequest, @PathVariable @NotNull String caseId) throws Exception {
 		 return ResponseEntity.ok(crmService.addDocToCase(caseId,docRequest));
 	}
+	
+	@ApiOperation(value = "", nickname = "deleteCase", notes = "Deletes a Case By Id", tags = { "crm", })
+	@RequestMapping(method = RequestMethod.DELETE, value = "/deleteCase/{caseId}", produces = { "application/json" })
+	public ResponseEntity<Object> deleteCase( @PathVariable @NotNull String caseId) throws Exception {
+		 return ResponseEntity.ok(crmService.deleteCase(caseId));
+	}
 
+	@ApiOperation(value = "", nickname = "deleteComment", notes = "Deletes a Comment By Id", tags = { "crm", })
+	@RequestMapping(method = RequestMethod.DELETE, value = "/deleteComment/{commentId}", produces = { "application/json" })
+	public ResponseEntity<Object> deleteComment( @PathVariable @NotNull String commentId) throws Exception {
+		 return ResponseEntity.ok(crmService.deleteComment(commentId));
+	}
 }

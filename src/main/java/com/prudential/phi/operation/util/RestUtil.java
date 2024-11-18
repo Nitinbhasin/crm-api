@@ -1,7 +1,5 @@
 package com.prudential.phi.operation.util;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -120,6 +118,19 @@ public class RestUtil {
 		return response.getBody();
 	}
 	
+	public Integer sendDELETE(String url, String relativePath, String accessToken, MultiValueMap<String, String> params) {
+		if (CRM_DISABLE_SSL_VALIDATION) {
+			disableSSLCertificateValidation();
+		}
+		RestClient restClient = RestClient.builder().requestFactory(new SimpleClientHttpRequestFactory()).baseUrl(url)
+				.defaultHeaders(httpHeaders -> {
+					httpHeaders.setBearerAuth(accessToken);
+				}).build();
+		ResponseEntity<String> response = restClient.delete()
+				.uri(uriBuilder -> uriBuilder.path("/" + relativePath).queryParams(params).build()).retrieve()
+				.toEntity(String.class);
+		return response.getStatusCode().value();
+	}
 	
 
 	public String sendPost(String url, String accessToken, String body, String relativePath, MediaType contentType)
@@ -170,7 +181,6 @@ public class RestUtil {
 	@SuppressWarnings("deprecation")
 	public String sendPost(String baseURL, List<NameValuePair> parametersBody, String relativePath,
 			MediaType contentType) throws Exception {
-		//performCurlCommand1();
 		if (CRM_DISABLE_SSL_VALIDATION) {
 			disableSSLCertificateValidation();
 		}
@@ -247,37 +257,5 @@ public class RestUtil {
         return encodedString;
     }
 
-	
-	
-	public void performCurlCommand1 () {
-		try {
-            // Define the curl command
-			String[] command = {
-	                "curl",
-	                "-v",
-	                "--location",
-	                "https://login.salesforce.com/services/oauth2/token"
-	            };            
-            // Create a ProcessBuilder instance
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-            
-            // Start the process
-            Process process = processBuilder.start();
-            
-            // Read the output
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-            
-            
-            // Wait for the process to complete
-            int exitCode = process.waitFor();
-            System.out.println("Exited with code: " + exitCode);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 }
