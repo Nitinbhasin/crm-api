@@ -27,6 +27,7 @@ import com.prudential.phi.operation.models.QueryOrderBy;
 import com.prudential.phi.operation.models.SearchCasesResponse;
 import com.prudential.phi.operation.models.SimpleExpression;
 import com.prudential.phi.operation.models.UpdateCaseRequest;
+import com.prudential.phi.operation.models.UpdateCommentRequest;
 import com.prudential.phi.operation.util.RestUtil;
 
 import io.micrometer.common.util.StringUtils;
@@ -289,6 +290,24 @@ public class CRMService {
 		return jsonObject.toString();
 	}
 	
+	public String updateComment(String commentId, UpdateCommentRequest updateCommentRequest) throws Exception {
+		String access_token = doLogin();
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("CommentBody", updateCommentRequest.getBody());
+		jsonObject.put("IsPublished", updateCommentRequest.getIsPublic());
+		Integer statusCode = restUtil.sendPatch(instanceUrl, access_token, jsonObject.toString(),
+				"services/data/v62.0/sobjects/CaseComment/" + commentId, MediaType.APPLICATION_JSON);
+		
+		if (statusCode == 204) {
+			jsonObject= new JSONObject();
+			jsonObject.put("isUpdated", true);
+			jsonObject.put("message", "Updated Successfully");
+		} else
+			throw new InternalError("Failed To Update");
+
+		return jsonObject.toString();
+	}
+	
 	public String deleteCase(String caseId) throws Exception {
 		String access_token = doLogin();
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
@@ -315,6 +334,24 @@ public class CRMService {
 		JSONObject jsonObject = new JSONObject();
 		if (statusCode == 204) {
 			log.info("Comment is deleted with caseID: "+commentId);
+			jsonObject.put("isDeleted", true);
+			jsonObject.put("message", "Deleted Successfully");
+		} else
+			throw new InternalError("Failed To Delete");
+
+		return jsonObject.toString();
+	}
+	
+	public String deleteDocumentById(String docId) throws Exception {
+		String access_token = doLogin();
+		String contentDocId=fetchContentDocumentId(access_token, docId);
+		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+
+		Integer statusCode = restUtil.sendDELETE(instanceUrl, "services/data/v62.0/sobjects/ContentDocument/" + contentDocId,
+				access_token, queryParams);
+		JSONObject jsonObject = new JSONObject();
+		if (statusCode == 204) {
+			log.info("Document is deleted with docId: "+docId);
 			jsonObject.put("isDeleted", true);
 			jsonObject.put("message", "Deleted Successfully");
 		} else

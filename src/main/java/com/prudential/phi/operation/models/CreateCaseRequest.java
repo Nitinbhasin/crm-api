@@ -34,7 +34,5 @@ public class CreateCaseRequest implements Serializable {
 	@SerializedName("documents")
 	private List<Document> documents = null;
 	
-	
-
 
 }

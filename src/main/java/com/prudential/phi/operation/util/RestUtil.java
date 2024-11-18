@@ -194,7 +194,6 @@ public class RestUtil {
 
 		HttpPost oauthPost = new HttpPost(baseURL+"/"+relativePath);
 		oauthPost.setEntity(new UrlEncodedFormEntity(parametersBody));
-		log.info("POST URL is :"+baseURL+"/"+relativePath);
 		String result = "";
 		try (CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager)
 				.build();
