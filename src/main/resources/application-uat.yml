@@ -8,7 +8,13 @@ crm:
   password: Om10$airamcTZExyKEzQEofYrLDb1ejeAs
   clientId: 3MVG9VMBZCsTL9hkd8jXNJB0zc8XCU4ThUl6LgSPC25d9uKFmM4OgvSQzsH2EA32Ksng5wqxlhLiQ9I3rUyBF
   clientSecret: 6592A6259BF3FF2DF0AA5BA4E39BE024C2EB2C92236804CB55B3C5542F63786E
-
+  projectId: pruinhlth-nprd-dev-scxlyx-7250 
+  userInfoMsg:
+    subscriptionId: user-info-received-subscription
+    topicName: user-info-received
+  quoteGeneratedMsg:
+    subscriptionId: quote-generated-subscription
+    topicName: quote-generated
   
 logging:
   pattern:
