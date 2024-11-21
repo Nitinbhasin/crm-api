@@ -15,7 +15,16 @@ crm:
   quoteGeneratedMsg:
     subscriptionId: quote-generated-subscription
     topicName: quote-generated
-  
+  paymentCompletionMsg:
+    subscriptionId: payment-completion-subscription
+  proposalReceivedMsg:
+    subscriptionId: proposal-received-subscription
+  counterOfferGeneratedMsg:
+    subscriptionId: counter-offer-generated-subscription
+  counterOfferResponseReceivedMsg:
+    subscriptionId: counter-offer-response-received-subscription
+  policyGeneratedMsg:
+    subscriptionId: policy-generated-subscription			    
 logging:
   pattern:
     console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%t] %-5level trace_id=%mdc{trace_id} %logger{36}:%L - %msg%n"
